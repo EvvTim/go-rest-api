@@ -1,0 +1,68 @@
+GET http://localhost:1234/users
+Accept: application/json
+
+{}
+> {%
+ client.test('Status code is 200',  function () {
+    client.assert(response.status === 200, 'response status is 200');
+  })
+ %}
+###
+
+GET http://localhost:1234/user/1
+Accept: application/json
+
+{}
+> {%
+ client.test('Status code is 200',  t => {
+    client.assert(response.status === 200, 'response status is 200');
+  })
+ %}
+
+###
+
+POST http://localhost:1234/users
+Accept: application/json
+
+{}
+
+> {%
+ client.test('Status code is 201',  t => {
+    client.assert(response.status === 201, 'response status is 201');
+  })
+ %}
+###
+
+PUT http://localhost:1234/user/1
+Accept: application/json
+
+{}
+> {%
+ client.test('Status code is 200',  t => {
+    client.assert(response.status === 200, 'response status is 200');
+  })
+ %}
+###
+
+PATCH http://localhost:1234/user/1
+Accept: application/json
+
+{}
+> {%
+ client.test('Status code is 200',  t => {
+    client.assert(response.status === 200, 'response status is 200');
+  })
+ %}
+###
+
+DELETE http://localhost:1234/user/1
+Accept: application/json
+
+{}
+> {%
+ client.test('Status code is 204',  t => {
+    client.assert(response.status === 204, 'response status is 204');
+  })
+ %}
+###
+

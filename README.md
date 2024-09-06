@@ -18,10 +18,8 @@ go-rest-api/
 ├── pkg/
 │   └── logging/
 │       └── logging.go         # Logging utilities using logrus
-├── .gitignore                 # Git ignore file
 ├── config.yml                 # Configuration file
 ├── go.mod                     # Go module dependencies
-└── go.sum                     # Go dependencies lock file
 ```
 
 **Features**

@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/EvvTim/go-rest-api/internal/handlers"
+	"github.com/EvvTim/go-rest-api/pkg/logging"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -14,6 +15,13 @@ const (
 )
 
 type handler struct {
+	logger logging.Logger
+}
+
+func NewHandler(logger *logging.Logger) handlers.Handler {
+	return &handler{
+		logger: *logger,
+	}
 }
 
 func (h *handler) Register(router *httprouter.Router) {
@@ -22,10 +30,6 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(userUrl, h.GetUserByUUID)
 	router.PUT(userUrl, h.UpdateUser)
 	router.DELETE(userUrl, h.DeleteUser)
-}
-
-func NewHandler() handlers.Handler {
-	return &handler{}
 }
 
 func (h *handler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -37,11 +41,6 @@ func (h *handler) GetUserByUUID(w http.ResponseWriter, r *http.Request, params h
 
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Write([]byte("add user"))
-}
-
-func (h *handler) GetAllUsers(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	w.Write([]byte("find all users"))
-
 }
 
 func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

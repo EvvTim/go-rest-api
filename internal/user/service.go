@@ -13,6 +13,5 @@ type Service struct {
 func (s Service) Create(ctx context.Context, user *User) (string, error) {
 	//return s.store.Create(ctx, user)
 
-	//TODO: implement me
 	return "", nil
 }

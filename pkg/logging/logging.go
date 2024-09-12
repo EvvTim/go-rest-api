@@ -20,7 +20,9 @@ func (hook *writerHook) Fire(entry *logrus.Entry) error {
 		return err
 	}
 	for _, w := range hook.Writer {
-		w.Write([]byte(line))
+		if _, err := w.Write([]byte(line)); err != nil {
+			return fmt.Errorf("failed to write log entry to writer: %v", err)
+		}
 	}
 	return err
 }
@@ -55,15 +57,17 @@ func init() {
 		FullTimestamp: true,
 	}
 
-	err := os.MkdirAll("logs", 0644)
+	err := os.MkdirAll("logs", 0755)
 	if err != nil {
 		panic(err)
 	}
 
-	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
+	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Printf("all log file: %s\n", allFile.Name())
 
 	l.SetOutput(io.Discard)
 

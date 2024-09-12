@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/EvvTim/go-rest-api/internal/config"
-	"github.com/EvvTim/go-rest-api/internal/user"
-	"github.com/EvvTim/go-rest-api/pkg/logging"
 	"github.com/julienschmidt/httprouter"
-	"log"
+	"go-rest-api/internal/config"
+	"go-rest-api/internal/user"
+	"go-rest-api/pkg/logging"
 	"net"
 	"net/http"
 	"os"
@@ -15,12 +14,35 @@ import (
 	"time"
 )
 
+const (
+	socketName = "app.sock"
+	socket     = "sock"
+)
+
 func main() {
 	logger := logging.GetLogger()
 	logger.Info("create router")
 	router := httprouter.New()
 
 	cfg := config.GetConfig()
+
+	//cfgMongoDB := cfg.MongoDB
+
+	//mongoDBClient, err := mongodb.NewClient(
+	//	context.Background(),
+	//	cfgMongoDB.Host,
+	//	cfgMongoDB.Port,
+	//	cfgMongoDB.Username,
+	//	cfgMongoDB.Password,
+	//	cfgMongoDB.Database,
+	//	cfgMongoDB.AuthDB,
+	//)
+	//
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	//storage := db.NewStorage(mongoDBClient, cfg.MongoDB.Collection, logger)
 
 	logger.Info("register user handler")
 	handler := user.NewHandler(logger)
@@ -31,25 +53,30 @@ func main() {
 
 func start(router *httprouter.Router, cfg *config.Config) {
 	logger := logging.GetLogger()
-	logger.Info("start app")
+	logger.Info("start application")
 
 	var listener net.Listener
 	var listenErr error
 
-	if cfg.Listen.Type == "sock" {
+	if cfg.Listen.Type == socket {
+		logger.Info("detect app path")
 		appDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 		if err != nil {
 			logger.Fatal(err)
 		}
+
 		logger.Info("create socket")
-		socketPath := path.Join(appDir, "app.sock")
-		logger.Debugf("socket path: %s", socketPath)
+		socketPath := path.Join(appDir, socketName)
 
 		logger.Info("listen unix socket")
 		listener, listenErr = net.Listen("unix", socketPath)
+		logger.Infof("server is listening unix socket: %s", socketPath)
 	} else {
-		logger.Info("listen tsp")
-		listener, listenErr = net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+		logger.Info("listen tcp")
+		listener, listenErr = net.Listen("tcp", fmt.Sprintf("%s:%s",
+			cfg.Listen.BindIP,
+			cfg.Listen.Port,
+		))
 	}
 
 	if listenErr != nil {
@@ -58,10 +85,10 @@ func start(router *httprouter.Router, cfg *config.Config) {
 
 	server := &http.Server{
 		Handler:      router,
-		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
-
 	logger.Infof("server is listening port %s:%s", cfg.Listen.BindIP, cfg.Listen.Port)
-	log.Fatal(server.Serve(listener))
+
+	logger.Fatal(server.Serve(listener))
 }

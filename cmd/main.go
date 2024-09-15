@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"go-rest-api/internal/config"
 	"go-rest-api/internal/user"
+	"go-rest-api/pkg/client/mongodb"
 	"go-rest-api/pkg/logging"
 	"net"
 	"net/http"
@@ -26,21 +28,23 @@ func main() {
 
 	cfg := config.GetConfig()
 
-	//cfgMongoDB := cfg.MongoDB
+	cfgMongoDB := cfg.MongoDB
 
-	//mongoDBClient, err := mongodb.NewClient(
-	//	context.Background(),
-	//	cfgMongoDB.Host,
-	//	cfgMongoDB.Port,
-	//	cfgMongoDB.Username,
-	//	cfgMongoDB.Password,
-	//	cfgMongoDB.Database,
-	//	cfgMongoDB.AuthDB,
-	//)
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
+	mongoDBClient, err := mongodb.NewClient(
+		context.Background(),
+		cfgMongoDB.Host,
+		cfgMongoDB.Port,
+		cfgMongoDB.Username,
+		cfgMongoDB.Password,
+		cfgMongoDB.Database,
+		cfgMongoDB.AuthDB,
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(mongoDBClient)
 
 	//storage := db.NewStorage(mongoDBClient, cfg.MongoDB.Collection, logger)
 

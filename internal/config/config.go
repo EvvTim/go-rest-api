@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	IsDebug *bool   `yaml:"is_debug" env-required:"true"`
-	Listen  Listen  `yaml:"listen"`
-	MongoDB MongoDB `yaml:"mongodb"`
+	IsDebug  *bool                 `yaml:"is_debug" env-required:"true"`
+	Listen   Listen                `yaml:"listen"`
+	MongoDB  MongoDBStorageConfig  `yaml:"mongodb"`
+	Postgres PostgresStorageConfig `yaml:"postgres"`
 }
 
 type Listen struct {
@@ -18,7 +19,7 @@ type Listen struct {
 	Port   string `yaml:"port" env-default:"8080"`
 }
 
-type MongoDB struct {
+type MongoDBStorageConfig struct {
 	Host       string `yaml:"host"`
 	Port       string `yaml:"port"`
 	Database   string `yaml:"database"`
@@ -26,6 +27,14 @@ type MongoDB struct {
 	AuthDB     string `yaml:"auth_db"`
 	Username   string `yaml:"username"`
 	Password   string `yaml:"password"`
+}
+
+type PostgresStorageConfig struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Database string `yaml:"database"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 var instance *Config

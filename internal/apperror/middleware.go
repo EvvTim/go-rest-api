@@ -12,9 +12,7 @@ func Middleware(h appHandler) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		var appErr *AppErr
-
 		err := h(w, r)
-
 		if err != nil {
 			if errors.As(err, &appErr) {
 				if errors.Is(err, ErrNotFound) {
@@ -23,9 +21,10 @@ func Middleware(h appHandler) http.HandlerFunc {
 					return
 				}
 
-				err = err.(*AppErr)
+				errors.As(err, &err)
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write(ErrNotFound.Marshal())
+				w.Write(appErr.Marshal())
+				return
 			}
 
 			w.WriteHeader(http.StatusTeapot)

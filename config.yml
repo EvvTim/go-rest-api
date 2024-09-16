@@ -12,3 +12,10 @@ mongodb:
     collection: users
     username:
     password:
+postgres:
+    host: localhost
+    port: 5432
+    database: testdb
+    username: postgres
+    password: root
+
